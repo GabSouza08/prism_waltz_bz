@@ -40,6 +40,63 @@ def get_duel_dialogue(c1, c2):
             return entry
     return None
 
+def resolve_pair_theme(c1, c2):
+    """
+    Uses your find_themed_opponent in both directions to confirm a curated matchup.
+    Returns (theme_category, theme_title) or (None, None).
+    """
+    e_data, _, theme_category, theme_title = find_themed_opponent(c1)
+    if e_data and e_data.get("name") == c2:
+        return theme_category, theme_title
+
+    e_data, _, theme_category, theme_title = find_themed_opponent(c2)
+    if e_data and e_data.get("name") == c1:
+        return theme_category, theme_title
+
+    return None, None
+
+
+def play_duel_theme_and_dialogue(c1, c2, pause=True, show_header=True, play_audio=True):
+    """
+    Plays curated theme (if any) and prints rivalry dialogue with optional pauses.
+    Returns a dict with metadata about what happened.
+    """
+    theme_category, theme_title = resolve_pair_theme(c1, c2)
+    if not theme_title:
+        return {
+            "has_curated": False,
+            "theme_category": None,
+            "theme_title": None,
+            "had_dialogue": False
+        }
+
+    if show_header:
+        print("\n🕯️ Duel Theme:")
+        print(f"🎭 {c1} vs {c2} | Theme: {theme_category}")
+        print(f"🎶 Theme Track: {theme_title}")
+
+    if play_audio:
+        play_theme_track(theme_title)
+
+    had_dialogue = False
+    dialogue = get_duel_dialogue(c1, c2)
+    if dialogue:
+        had_dialogue = True
+        print("\n📜 Rivalry Rekindled:")
+        for line in dialogue.get("intro_lines", []):
+            print(f" “{line}”")
+            if pause:
+                input(" ⏳ Press Enter to continue…")
+        if "ambient_note" in dialogue:
+            print(f"🩸 {dialogue['ambient_note']}")
+
+    return {
+        "has_curated": True,
+        "theme_category": theme_category,
+        "theme_title": theme_title,
+        "had_dialogue": had_dialogue
+    }
+
 def play_theme_track(filename):
     try:
         pygame.mixer.music.load(f"themes/{filename}")
@@ -128,6 +185,61 @@ def select_valid_echo_art(echo_gauge, arts, buffs):
         if cost <= echo_gauge:
             valid.append(name)
     return valid
+
+# fade_effects.py
+
+import time
+
+def trigger_flavor_effects(*fighters):
+    for f in fighters:
+        if f["HP"] <= 10 and f["HP"] > 0:
+            print("\n🩸 Critical Fade Triggered…")
+            house = f.get("house", "Default")
+            name = f["name"]
+
+            if house == "Alizarin":
+                print(f"{name} sinks to one knee — ash curls through the air.")
+                print("🔥 'Even pain remembers. I stand on it.'")
+
+            elif house == "Purpur":
+                print(f"{name} flickers — twilight threads dance on their skin.")
+                print("🪞 'Even fading can fool fate.'")
+
+            elif house == "Scarlet":
+                print(f"{name} braces their stance — shield dim but unshattered.")
+                print("🛡️ 'My vow was lit in fire. I won’t burn out.'")
+
+            elif house == "Violet":
+                print(f"{name} trembles — veil slipping, moonlight bleeding.")
+                print("🌙 'Grace lasts longer than breath…'")
+
+            else:
+                print(f"{name} staggers… echoes spiral in broken rhythm.")
+                print("💠 'I won’t fall as silence.'")
+
+def duo_echo_narration(f, echo_name):
+    print("💫 Echo Pulse Surges…")
+    time.sleep(0.6)
+
+    partner_name = f.partner.name if hasattr(f, "partner") else "???"
+    print(f"{f.name} steps forward — gaze locked with {partner_name}.")
+    time.sleep(0.8)
+
+    print("🎶 Their bond glows as twin memories spiral in sync.")
+    time.sleep(0.8)
+
+    print(f"🩰 {echo_name} unfolds: A duet of power, resolve, and forgotten rhythm.")
+    time.sleep(0.8)
+
+def turn_summary_fade():
+    print("Turn ends...")
+    time.sleep(0.4)
+    print(".")
+    time.sleep(0.4)
+    print("..")
+    time.sleep(0.4)
+    print("...")
+    time.sleep(0.6)
 
 def apply_echo_art(art, target, buffs):
     if art["type"] == "damage":
@@ -297,15 +409,27 @@ def run_enemy_turn(enemy, player, enemy_arts, echo_gauge, buffs):
 
 def start_solo_duel(p_house, p_name, p_bond,
                     e_house, e_name, e_bond,
-                    theme_name):
+                    theme_name,
+                    pause_intro=True,
+                    play_intro_audio=True):
     """
     Runs a solo duel between the player’s champion and an enemy.
     Returns a result dict for logging/saving.
     """
-    # Audio setup
     pygame.mixer.music.set_volume(0.3)
 
-    # Load champion stats
+    # Curated theme + rivalry lines if this pair has one (safe no-op otherwise)
+    meta = play_duel_theme_and_dialogue(
+        p_name, e_name,
+        pause=pause_intro,
+        show_header=True,
+        play_audio=play_intro_audio
+    )
+
+    # Decide which theme drives the turn-10 surge:
+    # use provided theme_name, else fall back to curated category if available
+    surge_theme = theme_name or meta.get("theme_category")
+
     p_stats = ChampionStats[p_house][p_name]
     e_stats = ChampionStats[e_house][e_name]
 
@@ -318,7 +442,8 @@ def start_solo_duel(p_house, p_name, p_bond,
         "SPD":        p_stats["SPD"],
         "Affinity":   p_stats["Affinity"],
         "echo_gauge": 0,
-        "buffs":      []
+        "buffs":      [],
+        "house":      p_house
     }
     enemy = {
         "name":       e_name,
@@ -329,10 +454,10 @@ def start_solo_duel(p_house, p_name, p_bond,
         "SPD":        e_stats["SPD"],
         "Affinity":   e_stats["Affinity"],
         "echo_gauge": 0,
-        "buffs":      []
+        "buffs":      [],
+        "house":      e_house
     }
 
-    # Prepare Echo‐Arts registries
     solo_echoes   = get_solo_echoes(p_house, EchoEffects)
     duo_echoes    = get_duo_echoes(p_house, p_bond, EchoEffects)
     player_arts   = {**solo_echoes, **duo_echoes}
@@ -341,19 +466,17 @@ def start_solo_duel(p_house, p_name, p_bond,
     enemy_arts    = {**enemy_solo, **enemy_duo}
 
     turn = 1
-    triggered_theme = None
+    triggered_theme = None  # records the surge theme, not the curated duel theme
 
-    # Main duel loop
     while player["HP"] > 0 and enemy["HP"] > 0:
         print(f"\n— Turn {turn} —")
         print(f"{player['name']} HP: {player['HP']}/{player['max_HP']} | Echo Gauge: {player['echo_gauge']}/{MAX_GAUGE}")
         print(f"{enemy['name']}  HP: {enemy['HP']}/{enemy['max_HP']} | Echo Gauge: {enemy['echo_gauge']}/{MAX_GAUGE}")
 
-        # Tick down buffs on both sides
         player["buffs"] = tick_buffs(player["buffs"])
         enemy["buffs"]  = tick_buffs(enemy["buffs"])
 
-        # Player’s turn
+        # 🧿 Player turn
         p_action = get_player_action(player, player["echo_gauge"], player_arts)
         player["echo_gauge"] = run_player_turn(
             player,
@@ -364,12 +487,14 @@ def start_solo_duel(p_house, p_name, p_bond,
             p_action
         )
 
-        # Check for player victory
+        # ✨ Trigger flavor after player turn
+        trigger_flavor_effects(player, enemy)
+
         if enemy["HP"] <= 0:
             print(f"\n🏆 {player['name']} wins!")
             break
 
-        # Enemy’s turn
+        # 🔮 Enemy turn
         enemy["echo_gauge"] = run_enemy_turn(
             enemy,
             player,
@@ -378,21 +503,22 @@ def start_solo_duel(p_house, p_name, p_bond,
             enemy["buffs"]
         )
 
-        # Theme Surge on turn 10
-        if theme_name and turn == 10 and not triggered_theme:
-            print(f"\n💥 SURGE: {theme_name.upper()} ruptures the battlefield!")
+        # ✨ Trigger flavor after enemy turn
+        trigger_flavor_effects(player, enemy)
+
+        # 🌌 Theme surge (separate from curated duel theme)
+        if surge_theme and turn == 10 and not triggered_theme:
+            print(f"\n💥 SURGE: {surge_theme.upper()} ruptures the battlefield!")
             pygame.mixer.music.set_volume(0.6)
             input("🌫️ The prism resonates… Press Enter.")
-            surge = apply_surge_effect(theme_name, player["buffs"])
-            triggered_theme = theme_name
+            surge = apply_surge_effect(surge_theme, player["buffs"])
+            triggered_theme = surge_theme
 
-            # Apply heal boost
             if "heal" in surge:
                 amt = surge["heal"]
                 player["HP"] = min(player["max_HP"], player["HP"] + amt)
                 print(f"💖 Heals {amt} HP → {player['HP']}/{player['max_HP']}")
 
-            # Apply echo gauge boost
             if "echo_boost" in surge:
                 boost = surge["echo_boost"]
                 player["echo_gauge"] = min(MAX_GAUGE, player["echo_gauge"] + boost)
@@ -400,20 +526,187 @@ def start_solo_duel(p_house, p_name, p_bond,
 
         turn += 1
 
-    # Compile result and save
+    # 🗂️ Compile result
     player_won = player["HP"] > 0
     result = {
-        "player_name":    player["name"],
-        "opponent_name":  enemy["name"],
-        "stage_id":       "SoloDuel",
-        "turn_count":     turn - 1,
-        "triggered_theme": triggered_theme,
-        "player_won":     player_won,
-        "timestamp":      datetime.now().isoformat()
+        "player_name":     player["name"],
+        "opponent_name":   enemy["name"],
+        "stage_id":        "SoloDuel",
+        "turn_count":      turn - 1,
+        "triggered_theme": triggered_theme,  # surge theme (if any)
+        "curated_theme":   (
+            {"category": meta.get("theme_category"), "title": meta.get("theme_title")}
+            if meta.get("has_curated") else None
+        ),
+        "player_won":      player_won,
+        "timestamp":       datetime.now().isoformat()
     }
+
     print(f"\n🏆 Result: {'Victory' if player_won else 'Defeat'} in {turn - 1} turns")
     save_duel(result)
     return result
+
+
+def start_duo_battle(
+    p1_house, p1_name, p2_house, p2_name, p1_idx, p2_idx, player_duo_echo,
+    e1_house, e1_name, e2_house, e2_name, e1_idx, e2_idx, enemy_duo_echo,
+    theme_name=None
+):
+    pygame.mixer.music.set_volume(0.3)
+
+    def build_fighter(house, name):
+        s = ChampionStats[house][name]
+        return {
+            "house":      house,
+            "name":       name,
+            "HP":         s["HP"],
+            "max_HP":     s["HP"],
+            "ATK":        s["ATK"],
+            "DEF":        s["DEF"],
+            "SPD":        s["SPD"],
+            "Affinity":   s["Affinity"],
+            "echo_gauge": 0,
+            "buffs":      []
+        }
+
+    # Build teams
+    P_active  = build_fighter(p1_house, p1_name)
+    P_partner = build_fighter(p2_house, p2_name)
+    E_active  = build_fighter(e1_house, e1_name)
+    E_partner = build_fighter(e2_house, e2_name)
+
+    # Duo echo keys
+    player_duo_key = player_duo_echo
+    enemy_duo_key  = enemy_duo_echo
+
+    def merged_arts(fighter, duo_key, partner_alive):
+        solos = get_solo_echoes(fighter["house"], EchoEffects)
+        duos  = get_duo_echoes(fighter["house"], duo_key, EchoEffects) if (duo_key and partner_alive) else {}
+        return {**solos, **duos}
+
+    def clamp_hp(f): f["HP"] = max(0, min(f["HP"], f["max_HP"]))
+    def clamp_gauge(f): f["echo_gauge"] = max(0, min(f["echo_gauge"], MAX_GAUGE))
+
+    turn = 1
+    triggered_theme = None
+    curated_theme_start = None
+    curated_theme_last_stand = None
+    last_stand_theme_fired = False
+
+    # 🎶 Open with theme + dialogue (if curated match)
+    meta_start = play_duel_theme_and_dialogue(P_active["name"], E_active["name"])
+    if meta_start.get("has_curated"):
+        curated_theme_start = {
+            "category": meta_start["theme_category"],
+            "title": meta_start["theme_title"]
+        }
+
+    print(f"\n🤝 Duo Battle Begins: {P_active['name']} & {P_partner['name']} "
+          f"vs {E_active['name']} & {E_partner['name']}")
+
+    def maybe_trigger_last_stand_theme():
+        nonlocal curated_theme_last_stand, last_stand_theme_fired
+        if last_stand_theme_fired:
+            return
+        allies  = [u for u in (P_active, P_partner) if u["HP"] > 0]
+        enemies = [u for u in (E_active, E_partner) if u["HP"] > 0]
+        if len(allies) == 1 and len(enemies) == 1:
+            a = allies[0]["name"]
+            b = enemies[0]["name"]
+            meta_last = play_duel_theme_and_dialogue(a, b, pause=False)
+            if meta_last.get("has_curated"):
+                curated_theme_last_stand = {
+                    "category": meta_last["theme_category"],
+                    "title": meta_last["theme_title"]
+                }
+            last_stand_theme_fired = True
+
+    while (P_active["HP"] > 0 or P_partner["HP"] > 0) and (E_active["HP"] > 0 or E_partner["HP"] > 0):
+        print(f"\n— Turn {turn} —")
+        print(f"{P_active['name']} HP: {P_active['HP']}/{P_active['max_HP']} | Echo Gauge: {P_active['echo_gauge']}/{MAX_GAUGE}  (ACTIVE)")
+        print(f"{P_partner['name']} HP: {P_partner['HP']}/{P_partner['max_HP']} | Echo Gauge: {P_partner['echo_gauge']}/{MAX_GAUGE}  (PARTNER)")
+        print(f"{E_active['name']}  HP: {E_active['HP']}/{E_active['max_HP']} | Echo Gauge: {E_active['echo_gauge']}/{MAX_GAUGE}  (ACTIVE)")
+        print(f"{E_partner['name']}  HP: {E_partner['HP']}/{E_partner['max_HP']} | Echo Gauge: {E_partner['echo_gauge']}/{MAX_GAUGE}  (PARTNER)")
+
+        P_active["buffs"] = tick_buffs(P_active["buffs"])
+        E_active["buffs"] = tick_buffs(E_active["buffs"])
+
+        # === PLAYER TURN ===
+        player_arts = merged_arts(P_active, player_duo_key, P_partner["HP"] > 0)
+        p_action = get_player_action(P_active, P_active["echo_gauge"], player_arts)
+        P_active["echo_gauge"] = run_player_turn(
+            P_active, E_active, player_arts, P_active["echo_gauge"], P_active["buffs"], p_action
+        )
+        clamp_hp(P_active); clamp_hp(E_active); clamp_gauge(P_active)
+
+        trigger_flavor_effects(P_active, P_partner, E_active, E_partner)
+
+        if E_active["HP"] <= 0:
+            if E_partner["HP"] > 0:
+                print(f"💫 {E_active['name']} falls — {E_partner['name']} tags in!")
+                E_active, E_partner = E_partner, E_active
+                trigger_flavor_effects(E_active)
+                maybe_trigger_last_stand_theme()
+            else:
+                print(f"\n🏆 {P_active['name']} & {P_partner['name']} win!")
+                break
+
+        # === ENEMY TURN ===
+        enemy_arts = merged_arts(E_active, enemy_duo_key, E_partner["HP"] > 0)
+        E_active["echo_gauge"] = run_enemy_turn(
+            E_active, P_active, enemy_arts, E_active["echo_gauge"], E_active["buffs"]
+        )
+        clamp_hp(E_active); clamp_hp(P_active); clamp_gauge(E_active)
+
+        trigger_flavor_effects(P_active, P_partner, E_active, E_partner)
+
+        if P_active["HP"] <= 0:
+            if P_partner["HP"] > 0:
+                print(f"💫 {P_active['name']} falls — {P_partner['name']} tags in!")
+                P_active, P_partner = P_partner, P_active
+                trigger_flavor_effects(P_active)
+                maybe_trigger_last_stand_theme()
+            else:
+                print(f"\n🏆 {E_active['name']} & {E_partner['name']} win!")
+                break
+
+        maybe_trigger_last_stand_theme()
+
+        if theme_name and turn == 10 and not triggered_theme:
+            print(f"\n💥 SURGE: {theme_name.upper()} ruptures the battlefield!")
+            pygame.mixer.music.set_volume(0.6)
+            input("🌫️ The prism resonates… Press Enter.")
+            surge = apply_surge_effect(theme_name, P_active["buffs"])
+            triggered_theme = theme_name
+
+            if "heal" in surge:
+                amt = surge["heal"]
+                P_active["HP"] = min(P_active["max_HP"], P_active["HP"] + amt)
+                print(f"💖 Heals {amt} HP → {P_active['HP']}/{P_active['max_HP']}")
+            if "echo_boost" in surge:
+                boost = surge["echo_boost"]
+                P_active["echo_gauge"] = min(MAX_GAUGE, P_active["echo_gauge"] + boost)
+                print(f"🎶 Echo Gauge +{boost} → {P_active['echo_gauge']}/{MAX_GAUGE}")
+
+        turn += 1
+
+    player_team_alive = (P_active["HP"] > 0) or (P_partner["HP"] > 0)
+    result = {
+        "player_team":            f"{p1_name} & {p2_name}",
+        "enemy_team":             f"{e1_name} & {e2_name}",
+        "stage_id":               "DuoBattle",
+        "turn_count":             turn - 1,
+        "triggered_theme":        triggered_theme,
+        "curated_theme_start":    curated_theme_start,
+        "curated_theme_last_stand": curated_theme_last_stand,
+        "player_won":             player_team_alive,
+        "timestamp":              datetime.now().isoformat()
+    }
+
+    print(f"\n🏆 Result: {'Victory' if player_team_alive else 'Defeat'} in {turn - 1} turns")
+    save_duel(result)
+    return result
+
 
 def themed_match():
     print("🌒 Prism Waltz — Combat Tool")
@@ -430,27 +723,36 @@ def themed_match():
     e_name = e_data["name"]
     e_bond = None
 
-    # === Match Preview ===
+    # 🧠 Unified theme resolution + play (replaces manual preview)
+    theme_category, theme_title = resolve_pair_theme(p_name, e_name)
+    #play_duel_theme_and_dialogue(p_name, e_name)
+
+    # 🏷️ Get titles
+    e_title = e_data.get("title") or "Unknown"
+    if e_title == "Unknown" and e_house in houses:
+        for name, title in houses[e_house]:
+            if name == e_name:
+                e_title = title
+                break
+
+    # 🧾 Match Preview
     print("\n⚔️ Duel Preview:")
     print(f"🌟 {p_name} — {p_title} [Domus {p_house}]")
     print("🆚")
-    print(f"🌑 {e_name} — {theme_title} [Domus {e_house}]")
-    print(f"🎭 Theme: {theme_category}")
+    print(f"🌑 {e_name} — {e_title} [Domus {e_house}]")
+    print(f"🎭 Theme: {theme_category or '—'}")
 
-    # === Theme Music & Dialogue ===
-    print(f"\n🎭 Match Found: {p_name} — {p_title} vs {e_name} | Theme: {theme_category}")
-    print(f"🎶 Theme Track: {theme_title}")
-    play_theme_track(theme_title)
-
+    # 📜 Pre-Battle Dialogue — one line at a time
     dialogue = get_duel_dialogue(p_name, e_name)
     if dialogue:
         print("\n📜 Pre-Battle Dialogue:")
-        for line in dialogue["intro_lines"]:
+        for line in dialogue.get("intro_lines", []):
             print(f" “{line}”")
-            input(" ⏳ Press Enter for next…")
-        print(f"🩸 {dialogue['ambient_note']}\n")
+            input(" ⏳ Press Enter to continue…")
+        if "ambient_note" in dialogue:
+            print(f"🩸 {dialogue['ambient_note']}")
 
-    # === Start Solo Duel ===
+    # === Start Duel ===
     result = start_solo_duel(
         p_house=p_house,
         p_name=p_name,
@@ -458,41 +760,18 @@ def themed_match():
         e_house=e_house,
         e_name=e_name,
         e_bond=e_bond,
-        theme_name=theme_category
+        theme_name=theme_category  # for turn-10 surge
+    )
+
+    # Optional: Attach curated theme to result if it wasn’t logged internally
+    result["curated_theme"] = (
+        {"category": theme_category, "title": theme_title}
+        if theme_title else None
     )
 
     # === Outcome & Persistence ===
     print(f"\n🏆 {'Victory' if result['player_won'] else 'Defeat'} in {result['turn_count']} turns!")
 
-def start_duo_battle(p1_house, p1_name, p2_house, p2_name, p1_idx, p2_idx, p1_echo, e1_house, e1_name, e2_house, e2_name, e1_idx, e2_idx, e_echo):
-    print(f"🤝 Duo Battle Begins: {p1_name} & {p2_name} vs {e1_name} & {e2_name}")
-    return {
-        "player_name": f"{p1_name} & {p2_name}",
-        "opponent_name": f"{e1_name} & {e2_name}",
-        "stage_id": "Duo Arena",
-        "turn_count": 0,
-        "triggered_theme": None,
-        "player_won": True,
-        "special_echo_tag": None,
-        "system_whisper_text": "Duo bonds shine brightest in the dark.",
-        "is_debug": True,
-        "timestamp": datetime.now().isoformat()
-    }
-
-def start_grand_clash(player_team, *enemy_teams):
-    print(f"⚔️ Grand Clash Begins: {player_team[1]} & {player_team[3]} vs {len(enemy_teams)} rival teams")
-    return {
-        "player_name": f"{player_team[1]} & {player_team[3]}",
-        "opponent_name": "Multiple Rivals",
-        "stage_id": "Grand Arena",
-        "turn_count": 0,
-        "triggered_theme": None,
-        "player_won": False,
-        "special_echo_tag": None,
-        "system_whisper_text": "The arena echoes with countless voices.",
-        "is_debug": True,
-        "timestamp": datetime.now().isoformat()
-    }
 
 if __name__ == "__main__":
     try:
