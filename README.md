@@ -1,26 +1,44 @@
 # 🎭 Prism Waltz BZ
 
-**Prism Waltz BZ** is a turn-based tactical RPG where Echo Arts, elemental affinities, and strategic bonds shape the rhythm of battle. Inspired by classic grid-based combat and infused with a unique dual-house mechanic, this game invites players to master the dance of positioning, synergy, and timing.
+**Prism Waltz BZ** is a tactical turn-based RPG where combat is a performance and synergy is everything. Harness the rhythm of **Echo Arts**, unite champions across the **dual-house system**, and master the delicate tempo of battle. Each move is a verse, every bond a harmony.
 
 ---
 
-## 🕹️ Gameplay Overview
+## 🕹️ Core Features
 
-- **Echo Arts**: Unlock powerful abilities based on your champion's house and bond.
-- **Dual-House System**: Each champion belongs to two houses, influencing their available skills and affinities.
-- **Bond Mechanics**: Strategic pairings unlock duo Echo Arts with unique effects.
-- **Turn-Based Combat**: Position your champions, manage cooldowns, and outwit your opponent.
+- **🎼 Echo Arts**  
+  Unleash abilities unique to each champion's house and bond. Tactical combos await those who study the rhythm.
+
+- **🔮 Dual-House System**  
+  Every champion belongs to *two houses*, influencing their elemental affinities and skillsets. Learn their loyalties, shape their destinies.
+
+- **🤝 Bond Mechanics**  
+  Form strategic pairings to unlock *Duo Echo Arts*—synergistic powers that turn the tide of battle when the timing’s just right.
+
+- **🧠 Turn-Based Grid Combat**  
+  Plan ahead, reposition tactically, and manage cooldowns in classic grid-style warfare—where improvisation meets precision.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Requirements
-- Python 3.10+
-- Recommended: Terminal or IDE with UTF-8 support
+- Python **3.10+**
+- Terminal or IDE with **UTF-8** support (for optimal vibes)
 
 ### Installation
-Clone the repo:
+
 ```bash
 git clone https://github.com/GabSouza08/prism_waltz_bz.git
 cd prism_waltz_bz
+```
+
+Then run the game script or dive into the codebase to build your own rhythm.
+
+---
+
+## 🌌 Project Status
+
+The symphony is still unfolding. Features, lore, and mechanics are being fine-tuned—so stay tuned for upcoming releases, new Echo Arts, and champion expansions.
+
+---

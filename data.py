@@ -245,6 +245,7 @@ duo_indices = {
               (8, "Sovereign Moonlit Song") ]
     }
 }
+
 ChampionStats = {
 "Violet": {
       "Carlos Eduardo":    {"HP": 190, "ATK": 30, "DEF": 30, "SPD": 20, "Affinity": "Twilight Gate"},
