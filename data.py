@@ -223,7 +223,7 @@ duo_indices = {
               (14,"Tidecall Mist Sovereign"),
               (2, "Shadow-Mist Wall"),
               (6, "Cipher of Mistcall") ],
-        7:  [ (6, "Mirror Avenger Cipher"),
+        7:  [ (10, "Mirrorblade Howl"),
               (0, "Mirror Fury of Moonrise"),
               (8, "Mirrorflame Sovereign"),
               (12,"Twilight Mirror Song") ],

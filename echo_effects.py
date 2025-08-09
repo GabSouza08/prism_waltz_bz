@@ -995,7 +995,7 @@ echo_arts.update({
 # ————————————————————————
 echo_arts.update({
 
-    # Ketillyn Irly (1) duos
+    # Ketillyn Irlly (1) duos
     "Moonrise Fury Trick": {
         "type":     "damage",
         "target":   "enemy",
@@ -1094,7 +1094,7 @@ echo_arts.update({
     },
 
     # Isadora Andrade (7) duos
-    "Mirror Avenger Cipher": {
+    "Mirrorblade Howl": {
         "type":     "status",
         "target":   "enemy",
         "effect":   "stun",
@@ -1241,6 +1241,50 @@ echo_arts.update({
         "target":   "self",
         "amount":   8,
         "cost":     8
+    }
+
+})
+# ————————————————————————
+# sector_7 Solo Echo-Arts
+# ————————————————————————
+echo_arts.update({
+
+    "Fractured Sigil": {
+        "type":     "damage",
+        "target":   "enemy",
+        "power":    6,
+        "cost":     5,
+        "bonus": {
+            "type":     "buff",
+            "target":   "self",
+            "stat":     "SPD",
+            "amount":   1,
+            "duration": 2
+        }
+    },
+
+    "Echofade": {
+        "type":     "buff",
+        "target":   "self",
+        "stat":     "SPD",
+        "amount":   2,
+        "duration": 2,
+        "cost":     5
+    },
+
+    "Thread of Silence": {
+        "type":     "status",
+        "target":   "enemy",
+        "effect":   "stun",
+        "duration": 1,
+        "cost":     5
+    },
+
+    "Remnant Pulse": {
+        "type":     "heal",
+        "target":   "self",
+        "amount":   8,
+        "cost":     5
     }
 
 })
