@@ -213,6 +213,10 @@ def trigger_flavor_effects(*fighters):
                 print(f"{name} trembles — veil slipping, moonlight bleeding.")
                 print("🌙 'Grace lasts longer than breath…'")
 
+            elif house == "Sector_7":
+                print(f"{name} falters — echoes fracture with brutal clarity.")
+                print("⚡ 'Let despair crack, but not silence me… not yet.'")
+
             else:
                 print(f"{name} staggers… echoes spiral in broken rhythm.")
                 print("💠 'I won’t fall as silence.'")
@@ -741,17 +745,7 @@ def themed_match():
     print("🆚")
     print(f"🌑 {e_name} — {e_title} [Domus {e_house}]")
     print(f"🎭 Theme: {theme_category or '—'}")
-
-    # 📜 Pre-Battle Dialogue — one line at a time
-    dialogue = get_duel_dialogue(p_name, e_name)
-    if dialogue:
-        print("\n📜 Pre-Battle Dialogue:")
-        for line in dialogue.get("intro_lines", []):
-            print(f" “{line}”")
-            input(" ⏳ Press Enter to continue…")
-        if "ambient_note" in dialogue:
-            print(f"🩸 {dialogue['ambient_note']}")
-
+    
     # === Start Duel ===
     result = start_solo_duel(
         p_house=p_house,

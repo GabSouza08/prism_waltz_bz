@@ -7,8 +7,6 @@ from echo_save import save_duel, load_all_duels
 from combat import start_solo_duel, start_duo_battle
 from theme_registry import theme_map
 
-
-
 def get_numeric_choice(prompt, min_c, max_c):
     while True:
         try:
@@ -43,12 +41,30 @@ def show_roster(house):
 
 def select_champion():
     print("\nChoose your Domus:")
-    for i, h in enumerate(houses.keys(), 1):
+    
+    # Filter visible houses (excluding Sector_7)
+    visible_houses = [h for h in houses if h != "Sector_7"]
+    
+    # Show visible options
+    for i, h in enumerate(visible_houses, 1):
         print(f"  [{i}] {h}")
-    h_choice = get_numeric_choice("> House #: ", 1, len(houses))
-    house = list(houses.keys())[h_choice - 1]
+
+    # print("  [7] ???")  # Optional: hint for the secret (can remove if you want it silent)
+
+    # Accept input from 1–7
+    h_choice = get_numeric_choice("> House #: ", 1, 7)
+
+    # Determine house
+    if h_choice == 7:
+        house = "Sector_7"
+        print("\n🧬 You’ve breached the silence. Sector_7 unlocked.")
+    else:
+        house = visible_houses[h_choice - 1]
+    
+    # Show selected house roster
     show_roster(house)
 
+    # Champion selection
     c_choice = get_numeric_choice("> Champion #: ", 1, len(houses[house]))
     champ_idx = c_choice - 1
     name, title = houses[house][champ_idx]
@@ -59,7 +75,6 @@ def select_champion():
     time.sleep(0.5)
 
     return house, champ_idx
-
 
 def form_bond(house, champ_idx):
     partners = duo_indices.get(house, {}).get(champ_idx)
@@ -119,18 +134,6 @@ def solo_duel():
         theme_name
     )
 
-    # Save result
-    save_duel({
-        "mode":     "Solo",
-        "player":   result.get("player_name"),
-        "opponent": result.get("opponent_name"),
-        "stage":    result.get("stage_id"),
-        "turns":    result.get("turn_count"),
-        "theme":    result.get("triggered_theme"),
-        "outcome":  "Win" if result.get("player_won") else "Loss",
-        "echo_tag": result.get("special_echo_tag"),
-        "whisper":  result.get("system_whisper_text")
-    })
 
     input("\nPress Enter to return to Main Menu…")
 
@@ -171,17 +174,6 @@ def duo_battle():
         p1_house, p1_name, p2_house, p2_name, p1_idx, p2_idx, p1_echo,
         e1_house, e1_name, e2_house, e2_name, e1_idx, e2_idx, e_echo
     )
-    save_duel({
-        "mode":     "Duo",
-        "player":   result.get("player_name"),
-        "opponent": result.get("opponent_name"),
-        "stage":    result.get("stage_id"),
-        "turns":    result.get("turn_count"),
-        "theme":    result.get("triggered_theme"),
-        "outcome":  "Win" if result.get("player_won") else "Loss",
-        "echo_tag": result.get("special_echo_tag"),
-        "whisper":  result.get("system_whisper_text")
-    })
     input("\nPress Enter to return to Main Menu…")
 
 def view_saved_duels():
@@ -256,8 +248,6 @@ def view_saved_duels():
             print(f"    - {duo} ({house}) Echo: {echo}")
 
     input("\nPress Enter to return to Saved Duels menu…")
-
-
 
 def main_menu():
     show_title_screen()

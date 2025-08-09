@@ -26,7 +26,7 @@ houses = {
         ("Adriel Melo",        "Herald of the Golden Dawn"),     # 2
         ("Bruna Adrielly",     "Ashen Dawn Crusader"),           # 3 (F)
         ("Anderson Marinho",   "Hearthstone Sentinel"),          # 4
-        ("Damylle Kemillly",   "Ember-Tide Chantress"),          # 5 (F)
+        ("Damylle Kemilly",   "Ember-Tide Chantress"),          # 5 (F)
         ("Arthur Lucas",       "Crestbearer of Sunstone Rhyme"), # 6
         ("Rayelle Marinho",    "Ember-Faced Virtuoso"),          # 7 (F)
         ("Brian Morone",       "Charcoal Beacon"),               # 8
@@ -58,7 +58,7 @@ houses = {
     ],
     "Purpur": [
         ("Arthur Ivandro",     "Bearer of the Moonrise Fury"),   # 0
-        ("Ketillyn Irly",      "Silver-Dusk Trickster"),          # 1 (F)
+        ("Ketillyn Irlly",      "Silver-Dusk Trickster"),          # 1 (F)
         ("David Erick",        "Shadow-Wall Duelist"),            # 2
         ("Bruna Evelyn",       "Silken Moonblade"),               # 3 (F)
         ("Gabriel Andre",      "Dawnbreaker of Dusk"),            # 4
@@ -73,15 +73,36 @@ houses = {
         ("Fabielly Fonseca",   "Silken Nightsong"),               # 13 (F)
         ("Thales Santana",     "Tidecall Duelist of Night"),      # 14
         ("Sophia Romero",      "Midnight Song Sovereign")         # 15 (F)
-    ]
+    ],
+    "Sector_7": [
+      ("Manuela Cavalcanti",  "Jester of Flawed Whispers"),
+      ("Luna França",         "Moondaughter of the Fraying West"),
+      ("Ryan Ribeiro",        "Kindling Voice of Forgotten Flame"),
+      ("Heitor Miguel",       "Pillarbound Heir of the Silent Code"),
+      ("Danilo Cavalcante",   "Mirrorkeeper of Verdant Silence"),
+      ("Ricardo Silva",       "Depthwarden of Silver Remains"),
+      ("Jhennifer Kelly",     "Seeker of the Unfurled Echo"),
+      ("Clara Melo",          "Flame Artisan of the Threaded Lyric"),
+      ("Sophia Paulino",      "Warden of Sapphire Silence"),
+      ("Lara Pontes",         "Mistwalker of the Hollow Tides"),
+      ("Vinicius Alves",      "Archivist of Guttered Light"),
+      ("Iury Barbosa",        "Envoy of the Broken Sigil"),
+      ("Mickael Ribeiro",     "Stormbinder of the Resonant Wake"),
+      ("Jandira Lopes",       "Matron of the Withered Harvest"),
+      ("Ivanildo Camilo",     "Vigilkeeper of Blazing Remembrance"),
+      ("Thaynara Magno",      "Luminary of the Woven Morrow")
+   ]
 }
+
+
 
 # 2) Solo Echo-Arts per House
 solo_echoes = {
     "Scarlet":  ["Emberlit Vow", "Radiant Shield", "Flame's Embrace", "Aegis Requiem"],
     "Alizarin": ["Solar Pulse", "Crimson Burst", "Dawn's Edge", "Ashen Echo"],
     "Violet":   ["Velvet Waltz", "Silent Bloom", "Gossamer Veil", "Moon's Respite"],
-    "Purpur":   ["Dusk Trick", "Shadowstep", "Illusory Dance", "Twilight Veil"]
+    "Purpur":   ["Dusk Trick", "Shadowstep", "Illusory Dance", "Twilight Veil"],
+    "Sector_7": ["Fractured Sigil", "Echofade", "Thread of Silence", "Remnant Pulse"]
 }
 
 # 3) Duo-bond indices by champion index
@@ -249,7 +270,7 @@ ChampionStats = {
         "Adriel Melo":       {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 5, "Affinity": "Golden Dawn"},
         "Bruna Adrielly":    {"HP": 29, "ATK": 7, "DEF": 5, "SPD": 8, "Affinity": "Ashen Dawn"},
         "Anderson Marinho":  {"HP": 33, "ATK": 6, "DEF": 5, "SPD": 4, "Affinity": "Hearthstone"},
-        "Damylle Kemillly":  {"HP": 30, "ATK": 6, "DEF": 3, "SPD": 9, "Affinity": "Ember-Tide"},
+        "Damylle Kemilly":   {"HP": 30, "ATK": 6, "DEF": 3, "SPD": 9, "Affinity": "Ember-Tide"},
         "Arthur Lucas":      {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 5, "Affinity": "Sunstone Rhyme"},
         "Rayelle Marinho":   {"HP": 31, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Ember-Faced"},
         "Brian Morone":      {"HP": 33, "ATK": 7, "DEF": 5, "SPD": 4, "Affinity": "Charcoal Beacon"},
@@ -281,7 +302,7 @@ ChampionStats = {
     },
     "Purpur": {
         "Arthur Ivandro":    {"HP": 35, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Moonrise Fury"},
-        "Ketillyn Irly":     {"HP": 33, "ATK": 6, "DEF": 4, "SPD": 9, "Affinity": "Silver-Dusk"},
+        "Ketillyn Irlly":    {"HP": 33, "ATK": 6, "DEF": 4, "SPD": 9, "Affinity": "Silver-Dusk"},
         "David Erick":       {"HP": 34, "ATK": 8, "DEF": 5, "SPD": 6, "Affinity": "Shadow-Wall"},
         "Bruna Evelyn":      {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 9, "Affinity": "Silken Moonblade"},
         "Gabriel Andre":     {"HP": 33, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Dawnbreaker of Dusk"},
@@ -296,7 +317,25 @@ ChampionStats = {
         "Fabielly Fonseca":  {"HP": 32, "ATK": 6, "DEF": 4, "SPD": 9, "Affinity": "Silken Nightsong"},
         "Thales Santana":    {"HP": 34, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Tidecall Duelist"},
         "Sophia Romero":     {"HP": 31, "ATK": 6, "DEF": 4, "SPD": 8, "Affinity": "Midnight Song"}
-    }
+    },
+    "Sector_7": {
+      "Manuela Cavalcanti":  {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 8, "Affinity": "Thread of Silence"},
+      "Luna França":         {"HP": 33, "ATK": 6, "DEF": 5, "SPD": 9, "Affinity": "Echofade"},
+      "Ryan Ribeiro":        {"HP": 34, "ATK": 8, "DEF": 4, "SPD": 6, "Affinity": "Fractured Sigil"},
+      "Heitor Miguel":       {"HP": 35, "ATK": 7, "DEF": 6, "SPD": 5, "Affinity": "Remnant Pulse"},
+      "Danilo Cavalcante":   {"HP": 33, "ATK": 7, "DEF": 5, "SPD": 7, "Affinity": "Thread of Silence"},
+      "Ricardo Silva":       {"HP": 31, "ATK": 7, "DEF": 5, "SPD": 8, "Affinity": "Echofade"},
+      "Jhennifer Kelly":     {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 9, "Affinity": "Fractured Sigil"},
+      "Clara Melo":          {"HP": 34, "ATK": 8, "DEF": 4, "SPD": 6, "Affinity": "Remnant Pulse"},
+      "Sophia Paulino":      {"HP": 32, "ATK": 7, "DEF": 5, "SPD": 8, "Affinity": "Thread of Silence"},
+      "Lara Pontes":         {"HP": 31, "ATK": 6, "DEF": 5, "SPD": 9, "Affinity": "Echofade"},
+      "Vinicius Alves":      {"HP": 33, "ATK": 7, "DEF": 4, "SPD": 9, "Affinity": "Fractured Sigil"},
+      "Iury Barbosa":        {"HP": 34, "ATK": 8, "DEF": 4, "SPD": 7, "Affinity": "Remnant Pulse"},
+      "Ivanildo Camilo":     {"HP": 35, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Thread of Silence"},
+      "Mickael Ribeiro":     {"HP": 32, "ATK": 7, "DEF": 6, "SPD": 6, "Affinity": "Echofade"},
+      "Jandira Lopes":       {"HP": 33, "ATK": 6, "DEF": 5, "SPD": 8, "Affinity": "Remnant Pulse"},
+      "Thaynara Magno":      {"HP": 33, "ATK": 5, "DEF": 5, "SPD": 8, "Affinity": "Thread of Silence"}
+   }
 }
 
 
