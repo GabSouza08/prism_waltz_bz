@@ -26,7 +26,7 @@ houses = {
         ("Adriel Melo",        "Herald of the Golden Dawn"),     # 2
         ("Bruna Adrielly",     "Ashen Dawn Crusader"),           # 3 (F)
         ("Anderson Marinho",   "Hearthstone Sentinel"),          # 4
-        ("Damylle Kemillly",   "Ember-Tide Chantress"),          # 5 (F)
+        ("Damylle Kemilly",   "Ember-Tide Chantress"),          # 5 (F)
         ("Arthur Lucas",       "Crestbearer of Sunstone Rhyme"), # 6
         ("Rayelle Marinho",    "Ember-Faced Virtuoso"),          # 7 (F)
         ("Brian Morone",       "Charcoal Beacon"),               # 8
@@ -58,7 +58,7 @@ houses = {
     ],
     "Purpur": [
         ("Arthur Ivandro",     "Bearer of the Moonrise Fury"),   # 0
-        ("Ketillyn Irly",      "Silver-Dusk Trickster"),          # 1 (F)
+        ("Ketillyn Irlly",      "Silver-Dusk Trickster"),          # 1 (F)
         ("David Erick",        "Shadow-Wall Duelist"),            # 2
         ("Bruna Evelyn",       "Silken Moonblade"),               # 3 (F)
         ("Gabriel Andre",      "Dawnbreaker of Dusk"),            # 4
@@ -73,15 +73,36 @@ houses = {
         ("Fabielly Fonseca",   "Silken Nightsong"),               # 13 (F)
         ("Thales Santana",     "Tidecall Duelist of Night"),      # 14
         ("Sophia Romero",      "Midnight Song Sovereign")         # 15 (F)
-    ]
+    ],
+    "Sector_7": [
+      ("Manuela Cavalcanti",  "Jester of Flawed Whispers"),
+      ("Luna França",         "Moondaughter of the Fraying West"),
+      ("Ryan Ribeiro",        "Kindling Voice of Forgotten Flame"),
+      ("Heitor Miguel",       "Pillarbound Heir of the Silent Code"),
+      ("Danilo Cavalcante",   "Mirrorkeeper of Verdant Silence"),
+      ("Ricardo Silva",       "Depthwarden of Silver Remains"),
+      ("Jhennifer Kelly",     "Seeker of the Unfurled Echo"),
+      ("Clara Melo",          "Flame Artisan of the Threaded Lyric"),
+      ("Sophia Paulino",      "Warden of Sapphire Silence"),
+      ("Lara Pontes",         "Mistwalker of the Hollow Tides"),
+      ("Vinicius Alves",      "Archivist of Guttered Light"),
+      ("Iury Barbosa",        "Envoy of the Broken Sigil"),
+      ("Mickael Ribeiro",     "Stormbinder of the Resonant Wake"),
+      ("Jandira Lopes",       "Matron of the Withered Harvest"),
+      ("Ivanildo Camilo",     "Vigilkeeper of Blazing Remembrance"),
+      ("Thaynara Magno",      "Luminary of the Woven Morrow")
+   ]
 }
+
+
 
 # 2) Solo Echo-Arts per House
 solo_echoes = {
     "Scarlet":  ["Emberlit Vow", "Radiant Shield", "Flame's Embrace", "Aegis Requiem"],
     "Alizarin": ["Solar Pulse", "Crimson Burst", "Dawn's Edge", "Ashen Echo"],
     "Violet":   ["Velvet Waltz", "Silent Bloom", "Gossamer Veil", "Moon's Respite"],
-    "Purpur":   ["Dusk Trick", "Shadowstep", "Illusory Dance", "Twilight Veil"]
+    "Purpur":   ["Dusk Trick", "Shadowstep", "Illusory Dance", "Twilight Veil"],
+    "Sector_7": ["Fractured Sigil", "Echofade", "Thread of Silence", "Remnant Pulse"]
 }
 
 # 3) Duo-bond indices by champion index
@@ -226,78 +247,97 @@ duo_indices = {
 }
 ChampionStats = {
     "Violet": {
-        "Carlos Eduardo":    {"HP": 36, "ATK": 6, "DEF": 7, "SPD": 4, "Affinity": "Twilight Gate"},
-        "Evellyn Oliveira":  {"HP": 32, "ATK": 5, "DEF": 6, "SPD": 6, "Affinity": "Moon’s Respite"},
-        "José Izaquiel":     {"HP": 34, "ATK": 6, "DEF": 5, "SPD": 5, "Affinity": "Moon Blessings"},
-        "Bianca Flora":      {"HP": 31, "ATK": 5, "DEF": 5, "SPD": 6, "Affinity": "Gossamer Veil"},
-        "Josenilton Oliveira":{"HP": 35, "ATK": 6, "DEF": 6, "SPD": 4, "Affinity": "Silent Bloom"},
-        "Maria Yasmim":      {"HP": 30, "ATK": 5, "DEF": 4, "SPD": 7, "Affinity": "Silent Bloom"},
-        "João Pedro":        {"HP": 33, "ATK": 6, "DEF": 5, "SPD": 5, "Affinity": "Gossamer Veil"},
-        "Ana Victoria":      {"HP": 32, "ATK": 5, "DEF": 5, "SPD": 6, "Affinity": "Moon’s Respite"},
-        "Manoel Henrique":   {"HP": 34, "ATK": 6, "DEF": 5, "SPD": 4, "Affinity": "Velvet Waltz"},
-        "Emilly Alves":      {"HP": 31, "ATK": 5, "DEF": 4, "SPD": 7, "Affinity": "Velvet Waltz"},
-        "Jobson Santana":    {"HP": 30, "ATK": 6, "DEF": 5, "SPD": 5, "Affinity": "Moon’s Respite"},
-        "Samantha Martinez": {"HP": 29, "ATK": 5, "DEF": 5, "SPD": 6, "Affinity": "Velvet Waltz"},
-        "Jonathan Nazareno": {"HP": 33, "ATK": 6, "DEF": 5, "SPD": 5, "Affinity": "Silent Bloom"},
-        "Mirelle Freitas":   {"HP": 32, "ATK": 5, "DEF": 5, "SPD": 6, "Affinity": "Gossamer Veil"},
-        "Ricardo Henrique":  {"HP": 35, "ATK": 6, "DEF": 6, "SPD": 4, "Affinity": "Moon’s Respite"},
-        "Vitoria Karoline":  {"HP": 31, "ATK": 5, "DEF": 5, "SPD": 7, "Affinity": "Moon’s Respite"}
+        "Carlos Eduardo":    {"HP": 180, "ATK": 30, "DEF": 35, "SPD": 20, "Affinity": "Twilight Gate"},
+        "Evellyn Oliveira":  {"HP": 160, "ATK": 25, "DEF": 30, "SPD": 30, "Affinity": "Moon’s Respite"},
+        "José Izaquiel":     {"HP": 170, "ATK": 30, "DEF": 25, "SPD": 25, "Affinity": "Moon Blessings"},
+        "Bianca Flora":      {"HP": 155, "ATK": 25, "DEF": 25, "SPD": 30, "Affinity": "Gossamer Veil"},
+        "Josenilton Oliveira":{"HP": 175, "ATK": 30, "DEF": 30, "SPD": 20, "Affinity": "Silent Bloom"},
+        "Maria Yasmim":      {"HP": 150, "ATK": 25, "DEF": 20, "SPD": 35, "Affinity": "Silent Bloom"},
+        "João Pedro":        {"HP": 165, "ATK": 30, "DEF": 25, "SPD": 25, "Affinity": "Gossamer Veil"},
+        "Ana Victoria":      {"HP": 160, "ATK": 25, "DEF": 25, "SPD": 30, "Affinity": "Moon’s Respite"},
+        "Manoel Henrique":   {"HP": 170, "ATK": 30, "DEF": 25, "SPD": 20, "Affinity": "Velvet Waltz"},
+        "Emilly Alves":      {"HP": 155, "ATK": 25, "DEF": 20, "SPD": 35, "Affinity": "Velvet Waltz"},
+        "Jobson Santana":    {"HP": 150, "ATK": 30, "DEF": 25, "SPD": 25, "Affinity": "Moon’s Respite"},
+        "Samantha Martinez": {"HP": 145, "ATK": 25, "DEF": 25, "SPD": 30, "Affinity": "Velvet Waltz"},
+        "Jonathan Nazareno": {"HP": 165, "ATK": 30, "DEF": 25, "SPD": 25, "Affinity": "Silent Bloom"},
+        "Mirelle Freitas":   {"HP": 160, "ATK": 25, "DEF": 25, "SPD": 30, "Affinity": "Gossamer Veil"},
+        "Ricardo Henrique":  {"HP": 175, "ATK": 30, "DEF": 30, "SPD": 20, "Affinity": "Moon’s Respite"},
+        "Vitoria Karoline":  {"HP": 155, "ATK": 25, "DEF": 25, "SPD": 35, "Affinity": "Moon’s Respite"}
     },
     "Alizarin": {
-        "Achiles Martins":   {"HP": 34, "ATK": 8, "DEF": 4, "SPD": 6, "Affinity": "Radiant Spear"},
-        "Andrielly Luiz":    {"HP": 30, "ATK": 6, "DEF": 3, "SPD": 9, "Affinity": "Solar Whispers"},
-        "Adriel Melo":       {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 5, "Affinity": "Golden Dawn"},
-        "Bruna Adrielly":    {"HP": 29, "ATK": 7, "DEF": 5, "SPD": 8, "Affinity": "Ashen Dawn"},
-        "Anderson Marinho":  {"HP": 33, "ATK": 6, "DEF": 5, "SPD": 4, "Affinity": "Hearthstone"},
-        "Damylle Kemillly":  {"HP": 30, "ATK": 6, "DEF": 3, "SPD": 9, "Affinity": "Ember-Tide"},
-        "Arthur Lucas":      {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 5, "Affinity": "Sunstone Rhyme"},
-        "Rayelle Marinho":   {"HP": 31, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Ember-Faced"},
-        "Brian Morone":      {"HP": 33, "ATK": 7, "DEF": 5, "SPD": 4, "Affinity": "Charcoal Beacon"},
-        "Marilia Oliveira":  {"HP": 29, "ATK": 6, "DEF": 4, "SPD": 8, "Affinity": "Scarlet-Pulse"},
-        "Felipe Emmanuel":   {"HP": 34, "ATK": 6, "DEF": 5, "SPD": 5, "Affinity": "First Ray"},
-        "Evellyn Kauany":    {"HP": 30, "ATK": 6, "DEF": 3, "SPD": 9, "Affinity": "Photon-Shield"},
-        "Gabriel Lacerda":   {"HP": 31, "ATK": 7, "DEF": 4, "SPD": 6, "Affinity": "Solar Chants"},
-        "Wellen Adelaide":   {"HP": 29, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Waveborn Flame"},
-        "Tulyo Martins":     {"HP": 32, "ATK": 6, "DEF": 5, "SPD": 6, "Affinity": "Morningstar"},
-        "Maria Jullya":      {"HP": 30, "ATK": 6, "DEF": 3, "SPD": 9, "Affinity": "Solar-Star"}
+        "Achiles Martins":   {"HP": 170, "ATK": 40, "DEF": 20, "SPD": 30, "Affinity": "Radiant Spear"},
+        "Andrielly Luiz":    {"HP": 150, "ATK": 30, "DEF": 15, "SPD": 45, "Affinity": "Solar Whispers"},
+        "Adriel Melo":       {"HP": 160, "ATK": 35, "DEF": 20, "SPD": 25, "Affinity": "Golden Dawn"},
+        "Bruna Adrielly":    {"HP": 145, "ATK": 35, "DEF": 25, "SPD": 40, "Affinity": "Ashen Dawn"},
+        "Anderson Marinho":  {"HP": 165, "ATK": 30, "DEF": 25, "SPD": 20, "Affinity": "Hearthstone"},
+        "Damylle Kemilly":   {"HP": 150, "ATK": 30, "DEF": 15, "SPD": 45, "Affinity": "Ember-Tide"},
+        "Arthur Lucas":      {"HP": 160, "ATK": 35, "DEF": 20, "SPD": 25, "Affinity": "Sunstone Rhyme"},
+        "Rayelle Marinho":   {"HP": 155, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Ember-Faced"},
+        "Brian Morone":      {"HP": 165, "ATK": 35, "DEF": 25, "SPD": 20, "Affinity": "Charcoal Beacon"},
+        "Marilia Oliveira":  {"HP": 145, "ATK": 30, "DEF": 20, "SPD": 40, "Affinity": "Scarlet-Pulse"},
+        "Felipe Emmanuel":   {"HP": 170, "ATK": 30, "DEF": 25, "SPD": 25, "Affinity": "First Ray"},
+        "Evellyn Kauany":    {"HP": 150, "ATK": 30, "DEF": 15, "SPD": 45, "Affinity": "Photon-Shield"},
+        "Gabriel Lacerda":   {"HP": 155, "ATK": 35, "DEF": 20, "SPD": 30, "Affinity": "Solar Chants"},
+        "Wellen Adelaide":   {"HP": 145, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Waveborn Flame"},
+        "Tulyo Martins":     {"HP": 160, "ATK": 30, "DEF": 25, "SPD": 30, "Affinity": "Morningstar"},
+        "Maria Jullya":      {"HP": 150, "ATK": 30, "DEF": 15, "SPD": 45, "Affinity": "Solar-Star"}
     },
     "Scarlet": {
-        "Eduardo Carlos":    {"HP": 36, "ATK": 8, "DEF": 4, "SPD": 6, "Affinity": "Golden Aegis"},
-        "Ana Clara":         {"HP": 34, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Serenity’s Verse"},
-        "Carlos Antonio":    {"HP": 35, "ATK": 8, "DEF": 4, "SPD": 6, "Affinity": "Quiet Flame"},
-        "Sara Regina":       {"HP": 33, "ATK": 8, "DEF": 3, "SPD": 8, "Affinity": "Flamebearer"},
-        "João Vitor":        {"HP": 35, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Ember Crown"},
-        "Sabrina Silva":     {"HP": 34, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Blazing Resolve"},
-        "Davi Luiz":         {"HP": 36, "ATK": 9, "DEF": 4, "SPD": 6, "Affinity": "Sunlit Rampart"},
-        "Maria Clara":       {"HP": 33, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Dawnlit Emissary"},
-        "Jefferson Lucas":   {"HP": 35, "ATK": 8, "DEF": 4, "SPD": 6, "Affinity": "Sunwave Vanguard"},
-        "Maria Cecília":     {"HP": 33, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Ember Chapel"},
-        "Matthews Guedes":   {"HP": 35, "ATK": 8, "DEF": 5, "SPD": 6, "Affinity": "Rampart-Warden"},
-        "Maria Luisa":       {"HP": 34, "ATK": 7, "DEF": 4, "SPD": 8, "Affinity": "Brightvoice"},
-        "Heleno Gomes":      {"HP": 36, "ATK": 8, "DEF": 5, "SPD": 6, "Affinity": "Daybreak Bastion"},
-        "Elen Nayara":       {"HP": 33, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Morning Mist"},
-        "Rodrigo Bezerra":   {"HP": 35, "ATK": 9, "DEF": 4, "SPD": 6, "Affinity": "Ironflare Duelist"},
-        "Esthella Angelina": {"HP": 34, "ATK": 7, "DEF": 3, "SPD": 8, "Affinity": "Nightlight’s Counterpoint"}
+        "Eduardo Carlos":    {"HP": 180, "ATK": 40, "DEF": 20, "SPD": 30, "Affinity": "Golden Aegis"},
+        "Ana Clara":         {"HP": 170, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Serenity’s Verse"},
+        "Carlos Antonio":    {"HP": 175, "ATK": 40, "DEF": 20, "SPD": 30, "Affinity": "Quiet Flame"},
+        "Sara Regina":       {"HP": 165, "ATK": 40, "DEF": 15, "SPD": 40, "Affinity": "Flamebearer"},
+        "João Vitor":        {"HP": 175, "ATK": 35, "DEF": 25, "SPD": 30, "Affinity": "Ember Crown"},
+        "Sabrina Silva":     {"HP": 170, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Blazing Resolve"},
+        "Davi Luiz":         {"HP": 180, "ATK": 45, "DEF": 20, "SPD": 30, "Affinity": "Sunlit Rampart"},
+        "Maria Clara":       {"HP": 165, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Dawnlit Emissary"},
+        "Jefferson Lucas":   {"HP": 175, "ATK": 40, "DEF": 20, "SPD": 30, "Affinity": "Sunwave Vanguard"},
+        "Maria Cecília":     {"HP": 165, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Ember Chapel"},
+        "Matthews Guedes":   {"HP": 175, "ATK": 40, "DEF": 25, "SPD": 30, "Affinity": "Rampart-Warden"},
+        "Maria Luisa":       {"HP": 170, "ATK": 35, "DEF": 20, "SPD": 40, "Affinity": "Brightvoice"},
+        "Heleno Gomes":      {"HP": 180, "ATK": 40, "DEF": 25, "SPD": 30, "Affinity": "Daybreak Bastion"},
+        "Elen Nayara":       {"HP": 165, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Morning Mist"},
+        "Rodrigo Bezerra":   {"HP": 175, "ATK": 45, "DEF": 20, "SPD": 30, "Affinity": "Ironflare Duelist"},
+        "Esthella Angelina": {"HP": 170, "ATK": 35, "DEF": 15, "SPD": 40, "Affinity": "Nightlight’s Counterpoint"}
     },
     "Purpur": {
-        "Arthur Ivandro":    {"HP": 35, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Moonrise Fury"},
-        "Ketillyn Irly":     {"HP": 33, "ATK": 6, "DEF": 4, "SPD": 9, "Affinity": "Silver-Dusk"},
-        "David Erick":       {"HP": 34, "ATK": 8, "DEF": 5, "SPD": 6, "Affinity": "Shadow-Wall"},
-        "Bruna Evelyn":      {"HP": 32, "ATK": 7, "DEF": 4, "SPD": 9, "Affinity": "Silken Moonblade"},
-        "Gabriel Andre":     {"HP": 33, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Dawnbreaker of Dusk"},
-        "Mariana Pontes":    {"HP": 31, "ATK": 6, "DEF": 4, "SPD": 8, "Affinity": "Mistbringer"},
-        "Gabriel Lucena":    {"HP": 34, "ATK": 7, "DEF": 6, "SPD": 5, "Affinity": "Nocturnal Cipher"},
-        "Isadora Andrade":   {"HP": 33, "ATK": 6, "DEF": 4, "SPD": 9, "Affinity": "Mirrorblade"},
-        "Henrique Floripe":  {"HP": 35, "ATK": 7, "DEF": 6, "SPD": 6, "Affinity": "Moonlit Sovereign"},
-        "Karoline Cassiano": {"HP": 32, "ATK": 6, "DEF": 4, "SPD": 8, "Affinity": "Moonflare Visionary"},
-        "Leonardo Lyon":     {"HP": 34, "ATK": 8, "DEF": 5, "SPD": 5, "Affinity": "Howl of the Citadel"},
-        "Emilly Nayara":     {"HP": 31, "ATK": 6, "DEF": 4, "SPD": 8, "Affinity": "Nightbloom Chanter"},
-        "Ronald Bryan":      {"HP": 33, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Twilight Harbinger"},
-        "Fabielly Fonseca":  {"HP": 32, "ATK": 6, "DEF": 4, "SPD": 9, "Affinity": "Silken Nightsong"},
-        "Thales Santana":    {"HP": 34, "ATK": 7, "DEF": 5, "SPD": 6, "Affinity": "Tidecall Duelist"},
-        "Sophia Romero":     {"HP": 31, "ATK": 6, "DEF": 4, "SPD": 8, "Affinity": "Midnight Song"}
+        "Arthur Ivandro":    {"HP": 175, "ATK": 35, "DEF": 25, "SPD": 30, "Affinity": "Moonrise Fury"},
+        "Ketillyn Irlly":    {"HP": 165, "ATK": 30, "DEF": 20, "SPD": 45, "Affinity": "Silver-Dusk"},
+        "David Erick":       {"HP": 170, "ATK": 40, "DEF": 25, "SPD": 30, "Affinity": "Shadow-Wall"},
+        "Bruna Evelyn":      {"HP": 160, "ATK": 35, "DEF": 20, "SPD": 45, "Affinity": "Silken Moonblade"},
+        "Gabriel Andre":     {"HP": 165, "ATK": 35, "DEF": 25, "SPD": 30, "Affinity": "Dawnbreaker of Dusk"},
+        "Mariana Pontes":    {"HP": 155, "ATK": 30, "DEF": 20, "SPD": 40, "Affinity": "Mistbringer"},
+        "Gabriel Lucena":    {"HP": 170, "ATK": 35, "DEF": 30, "SPD": 25, "Affinity": "Nocturnal Cipher"},
+        "Isadora Andrade":   {"HP": 165, "ATK": 30, "DEF": 20, "SPD": 45, "Affinity": "Mirrorblade"},
+        "Henrique Floripe":  {"HP": 175, "ATK": 35, "DEF": 30, "SPD": 30, "Affinity": "Moonlit Sovereign"},
+        "Karoline Cassiano": {"HP": 160, "ATK": 30, "DEF": 20, "SPD": 40, "Affinity": "Moonflare Visionary"},
+        "Leonardo Lyon":     {"HP": 170, "ATK": 40, "DEF": 25, "SPD": 25, "Affinity": "Howl of the Citadel"},
+        "Emilly Nayara":     {"HP": 155, "ATK": 30, "DEF": 20, "SPD": 40, "Affinity": "Nightbloom Chanter"},
+        "Ronald Bryan":      {"HP": 165, "ATK": 35, "DEF": 25, "SPD": 30, "Affinity": "Twilight Harbinger"},
+        "Fabielly Fonseca":  {"HP": 160, "ATK": 30, "DEF": 20, "SPD": 45, "Affinity": "Silken Nightsong"},
+        "Thales Santana":    {"HP": 170, "ATK": 35, "DEF": 25, "SPD": 30, "Affinity": "Tidecall Duelist"},
+        "Sophia Romero":     {"HP": 155, "ATK": 30, "DEF": 20, "SPD": 40, "Affinity": "Midnight Song"}
+    },
+    "Sector_7": {
+        "Manuela Cavalcanti":  {"HP": 160, "ATK": 35, "DEF": 20, "SPD": 40, "Affinity": "Thread of Silence"},
+        "Luna França":         {"HP": 165, "ATK": 30, "DEF": 25, "SPD": 45, "Affinity": "Echofade"},
+        "Ryan Ribeiro":        {"HP": 170, "ATK": 40, "DEF": 20, "SPD": 30, "Affinity": "Fractured Sigil"},
+        "Heitor Miguel":       {"HP": 175, "ATK": 35, "DEF": 30, "SPD": 25, "Affinity": "Remnant Pulse"},
+        "Danilo Cavalcante":   {"HP": 165, "ATK": 35, "DEF": 25, "SPD": 35, "Affinity": "Thread of Silence"},
+        "Ricardo Silva":       {"HP": 155, "ATK": 35, "DEF": 25, "SPD": 40, "Affinity": "Echofade"},
+        "Jhennifer Kelly":     {"HP": 160, "ATK": 35, "DEF": 20, "SPD": 45, "Affinity": "Fractured Sigil"},
+        "Clara Melo":          {"HP": 170, "ATK": 40, "DEF": 20, "SPD": 30, "Affinity": "Remnant Pulse"},
+        "Sophia Paulino":      {"HP": 160, "ATK": 35, "DEF": 25, "SPD": 40, "Affinity": "Thread of Silence"},
+        "Lara Pontes":         {"HP": 155, "ATK": 30, "DEF": 25, "SPD": 45, "Affinity": "Echofade"},
+        "Vinicius Alves":      {"HP": 165, "ATK": 35, "DEF": 20, "SPD": 45, "Affinity": "Fractured Sigil"},
+        "Iury Barbosa":        {"HP": 170, "ATK": 40, "DEF": 20, "SPD": 35, "Affinity": "Remnant Pulse"},
+        "Ivanildo Camilo":     {"HP": 175, "ATK": 35, "DEF": 25, "SPD": 30, "Affinity": "Thread of Silence"},
+        "Mickael Ribeiro":     {"HP": 160, "ATK": 35, "DEF": 30, "SPD": 30, "Affinity": "Echofade"},
+        "Jandira Lopes":       {"HP": 165, "ATK": 30, "DEF": 25, "SPD": 40, "Affinity": "Remnant Pulse"},
+        "Thaynara Magno":      {"HP": 165, "ATK": 25, "DEF": 25, "SPD": 40, "Affinity": "Thread of Silence"}
     }
 }
+
 
 
 # 1) Build inverse (male_index → list of (female_index, echo))

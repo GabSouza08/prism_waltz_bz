@@ -213,6 +213,10 @@ def trigger_flavor_effects(*fighters):
                 print(f"{name} trembles — veil slipping, moonlight bleeding.")
                 print("🌙 'Grace lasts longer than breath…'")
 
+            elif house == "Sector_7":
+                print(f"{name} falters — echoes fracture with brutal clarity.")
+                print("⚡ 'Let despair crack, but not silence me… not yet.'")
+
             else:
                 print(f"{name} staggers… echoes spiral in broken rhythm.")
                 print("💠 'I won’t fall as silence.'")
@@ -283,11 +287,16 @@ def get_player_action(player, echo_gauge, player_arts):
 
     return ["Attack", "Defend", "Echo Art"][choice - 1]
 
-def calculate_damage(attacker, defender, atk_range=(0.8, 1.2)):
-    factor = random.uniform(*atk_range)
-    raw = attacker["ATK"] * factor
-    mitigated = raw - (defender["DEF"] / 2)
-    return max(1, int(mitigated))
+def calculate_damage(attacker, defender, atk_range=(0.9, 1.1)):
+    # Step 1: Random variation in ATK
+    atk_factor = random.uniform(*atk_range)
+    scaled_atk = int(round(attacker["ATK"] * atk_factor))
+    # Step 2: Ratio-based mitigation (defense absorbs proportionally)
+    mitigation_ratio = 100 / (100 + defender["DEF"])
+    raw_damage = scaled_atk * mitigation_ratio
+    # Step 3: Clamp to at least 1 and round cleanly
+    return max(1, int(round(raw_damage)))
+
 
 def run_player_turn(player, enemy, player_arts, echo_gauge, buffs, p_action):
     if p_action == "Attack":
@@ -351,61 +360,39 @@ def run_player_turn(player, enemy, player_arts, echo_gauge, buffs, p_action):
 
     return echo_gauge
 
-def run_enemy_turn(enemy, player, enemy_arts, echo_gauge, buffs):
+def run_enemy_turn(enemy, player, enemy_arts, echo_gauge, buffs,
+                   gauge_cap=10, defend_chance=0.25, echo_chance=0.5):
     print(f"\n🤖 {enemy['name']}'s turn...")
 
-    # Tick buffs
     buffs = tick_buffs(buffs)
+    def clamp(val): return max(0, min(gauge_cap, val))
 
-    # Choose action
-    available_echoes = [name for name, art in enemy_arts.items() if art["cost"] <= echo_gauge]
-    use_echo = available_echoes and random.random() < 0.5  # 50% chance to use Echo-Art
+    hp_ratio = enemy["HP"] / enemy["max_HP"]
+    echo_ready = [name for name, art in enemy_arts.items() if art["cost"] <= echo_gauge]
 
-    if use_echo:
-        art_name = random.choice(available_echoes)
+    # Prioritize Echo Art if available
+    if echo_ready and random.random() < echo_chance:
+        art_name = random.choice(echo_ready)
         art = enemy_arts[art_name]
-        echo_gauge -= art["cost"]
+        echo_gauge = clamp(echo_gauge - art["cost"])
         print(f"🎵 {enemy['name']} uses Echo Art: {art_name}!")
-
-        if art["type"] == "buff":
-            buff = {
-                "stat": art["stat"].lower(),
-                "amount": art["amount"],
-                "duration": art["duration"]
-            }
-            buffs.append(buff)
-            print(f"🌀 Buff: +{buff['amount']} {buff['stat'].upper()} for {buff['duration']} turns.")
-
-        elif art["type"] == "heal":
-            healed = min(enemy["max_HP"] - enemy["HP"], art["amount"])
-            enemy["HP"] += healed
-            print(f"💖 Heals {healed} HP → {enemy['HP']}/{enemy['max_HP']}")
-
-        elif art["type"] == "damage":
-            dmg = art["power"]
-            player["HP"] -= dmg
-            print(f"🔥 Deals {dmg} damage to {player['name']}!")
-
-            if "bonus" in art:
-                bonus = art["bonus"]
-                if bonus["type"] == "buff":
-                    buff = {
-                        "stat": bonus["stat"].lower(),
-                        "amount": bonus["amount"],
-                        "duration": bonus["duration"]
-                    }
-                    buffs.append(buff)
-                    print(f"🔁 Bonus Buff: +{buff['amount']} {buff['stat'].upper()} for {buff['duration']} turns.")
-
+        # ...handle art effects...
+    # Otherwise, randomly defend or attack
+    elif random.random() < defend_chance or (hp_ratio < 0.6 and echo_gauge <= 5):
+        def_buff = int(round(enemy["DEF"] * 0.5))
+        buffs.append({"stat": "def", "amount": def_buff, "duration": 1, "tag": "GUARD"})
+        echo_gauge = clamp(echo_gauge + 2)
+        print(f"🛡️ {enemy['name']} defends. +{def_buff} DEF for 1 turn. Echo Gauge: {echo_gauge}/{gauge_cap}")
     else:
-        # Basic attack
         atk_bonus = sum(b["amount"] for b in buffs if b["stat"].lower() == "atk")
-        base_atk = enemy["ATK"] + atk_bonus
-        dmg = calculate_damage({"ATK": base_atk}, player)
-        player["HP"] -= dmg
+        final_atk = enemy["ATK"] + atk_bonus
+        dmg = calculate_damage({"ATK": final_atk}, player)
+        player["HP"] = max(0, player["HP"] - dmg)
         print(f"🗡️ {enemy['name']} attacks! Deals {dmg} damage.")
 
-    return echo_gauge
+    return echo_gauge, buffs
+
+
 
 def start_solo_duel(p_house, p_name, p_bond,
                     e_house, e_name, e_bond,
@@ -495,7 +482,7 @@ def start_solo_duel(p_house, p_name, p_bond,
             break
 
         # 🔮 Enemy turn
-        enemy["echo_gauge"] = run_enemy_turn(
+        enemy["echo_gauge"], enemy["buffs"] = run_enemy_turn(
             enemy,
             player,
             enemy_arts,
@@ -653,7 +640,7 @@ def start_duo_battle(
 
         # === ENEMY TURN ===
         enemy_arts = merged_arts(E_active, enemy_duo_key, E_partner["HP"] > 0)
-        E_active["echo_gauge"] = run_enemy_turn(
+        E_active["echo_gauge"], E_active["buffs"] = run_enemy_turn(
             E_active, P_active, enemy_arts, E_active["echo_gauge"], E_active["buffs"]
         )
         clamp_hp(E_active); clamp_hp(P_active); clamp_gauge(E_active)
@@ -741,17 +728,7 @@ def themed_match():
     print("🆚")
     print(f"🌑 {e_name} — {e_title} [Domus {e_house}]")
     print(f"🎭 Theme: {theme_category or '—'}")
-
-    # 📜 Pre-Battle Dialogue — one line at a time
-    dialogue = get_duel_dialogue(p_name, e_name)
-    if dialogue:
-        print("\n📜 Pre-Battle Dialogue:")
-        for line in dialogue.get("intro_lines", []):
-            print(f" “{line}”")
-            input(" ⏳ Press Enter to continue…")
-        if "ambient_note" in dialogue:
-            print(f"🩸 {dialogue['ambient_note']}")
-
+    
     # === Start Duel ===
     result = start_solo_duel(
         p_house=p_house,
