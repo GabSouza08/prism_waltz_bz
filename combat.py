@@ -287,11 +287,16 @@ def get_player_action(player, echo_gauge, player_arts):
 
     return ["Attack", "Defend", "Echo Art"][choice - 1]
 
-def calculate_damage(attacker, defender, atk_range=(0.8, 1.2)):
-    factor = random.uniform(*atk_range)
-    raw = attacker["ATK"] * factor
-    mitigated = raw - (defender["DEF"] / 2)
-    return max(1, int(mitigated))
+def calculate_damage(attacker, defender, atk_range=(0.9, 1.1)):
+    # Step 1: Random variation in ATK
+    atk_factor = random.uniform(*atk_range)
+    scaled_atk = int(round(attacker["ATK"] * atk_factor))
+    # Step 2: Ratio-based mitigation (defense absorbs proportionally)
+    mitigation_ratio = 100 / (100 + defender["DEF"])
+    raw_damage = scaled_atk * mitigation_ratio
+    # Step 3: Clamp to at least 1 and round cleanly
+    return max(1, int(round(raw_damage)))
+
 
 def run_player_turn(player, enemy, player_arts, echo_gauge, buffs, p_action):
     if p_action == "Attack":
@@ -355,61 +360,101 @@ def run_player_turn(player, enemy, player_arts, echo_gauge, buffs, p_action):
 
     return echo_gauge
 
-def run_enemy_turn(enemy, player, enemy_arts, echo_gauge, buffs):
+def run_enemy_turn(enemy, player, enemy_arts, echo_gauge, buffs, ctx,
+                   gauge_cap=10, crit_hp_ratio=0.15):
     print(f"\n🤖 {enemy['name']}'s turn...")
 
-    # Tick buffs
+    # 1) Upkeep
     buffs = tick_buffs(buffs)
 
-    # Choose action
-    available_echoes = [name for name, art in enemy_arts.items() if art["cost"] <= echo_gauge]
-    use_echo = available_echoes and random.random() < 0.5  # 50% chance to use Echo-Art
+    # 2) Helpers
+    def clamp(v): return max(0, min(gauge_cap, v))
+    def get_stat_bonus(buffs_list, stat):
+        return sum(b["amount"] for b in buffs_list if b["stat"].lower() == stat.lower())
 
-    if use_echo:
-        art_name = random.choice(available_echoes)
+    # 3) Context
+    hp_ratio = enemy["HP"] / enemy["max_HP"]
+    atk_bonus = get_stat_bonus(buffs, "atk")
+    final_atk = enemy["ATK"] + atk_bonus
+
+    defender_def = player.get("DEF", 0) + get_stat_bonus(player.get("buffs", []), "def")
+    expected_dmg = max(1, final_atk - defender_def)
+
+    # Echo readiness
+    echo_ready = [name for name, art in enemy_arts.items() if art.get("cost", 0) <= echo_gauge]
+    min_echo_cost = None
+    if enemy_arts:
+        costs = [art.get("cost", 0) for art in enemy_arts.values()]
+        min_echo_cost = min(costs) if costs else None
+
+    consec_defends = ctx.get("consec_defends", 0)
+
+    # 4) Decide action (aggressive core)
+    action = "attack"
+    art_name = None
+
+    # Echo always takes priority if affordable
+    if echo_ready:
+        action = "echo"
+        # keep simple: random among available arts
+        art_name = random.choice(echo_ready)
+
+    else:
+        # Only defend if:
+        # - critically low HP, AND
+        # - defending helps reach the cheapest Echo (gauge +2 moves toward min cost), AND
+        # - we didn't just defend (prevents loops)
+        need_echo_build = (
+            min_echo_cost is not None and
+            echo_gauge + 2 <= min_echo_cost
+        )
+        if hp_ratio <= crit_hp_ratio and need_echo_build and consec_defends == 0:
+            action = "defend"
+        else:
+            action = "attack"
+
+    # 5) Execute
+    if action == "echo":
         art = enemy_arts[art_name]
-        echo_gauge -= art["cost"]
+        echo_gauge = clamp(echo_gauge - art.get("cost", 0))
         print(f"🎵 {enemy['name']} uses Echo Art: {art_name}!")
 
-        if art["type"] == "buff":
-            buff = {
-                "stat": art["stat"].lower(),
-                "amount": art["amount"],
-                "duration": art["duration"]
-            }
-            buffs.append(buff)
-            print(f"🌀 Buff: +{buff['amount']} {buff['stat'].upper()} for {buff['duration']} turns.")
+        if art.get("type") == "damage":
+            dmg = int(round(art.get("power", expected_dmg)))
+            player["HP"] = max(0, player["HP"] - dmg)
+            print(f"🔥 Deals {dmg} damage to {player['name']}!")
+            # optional bonus buff
+            bonus = art.get("bonus")
+            if bonus and bonus.get("type") == "buff":
+                buffs.append({"stat": bonus["stat"], "amount": bonus["amount"], "duration": bonus["duration"]})
+                print(f"🔁 Bonus Buff: +{bonus['amount']} {bonus['stat'].upper()} for {bonus['duration']} turns.")
 
-        elif art["type"] == "heal":
-            healed = min(enemy["max_HP"] - enemy["HP"], art["amount"])
+        elif art.get("type") == "heal":
+            healed = min(enemy["max_HP"] - enemy["HP"], art.get("amount", 0))
             enemy["HP"] += healed
             print(f"💖 Heals {healed} HP → {enemy['HP']}/{enemy['max_HP']}")
 
-        elif art["type"] == "damage":
-            dmg = art["power"]
-            player["HP"] -= dmg
-            print(f"🔥 Deals {dmg} damage to {player['name']}!")
+        elif art.get("type") == "buff":
+            buffs.append({"stat": art["stat"].lower(), "amount": art["amount"], "duration": art["duration"]})
+            print(f"🌀 Buff: +{art['amount']} {art['stat'].upper()} for {art['duration']} turns.")
 
-            if "bonus" in art:
-                bonus = art["bonus"]
-                if bonus["type"] == "buff":
-                    buff = {
-                        "stat": bonus["stat"].lower(),
-                        "amount": bonus["amount"],
-                        "duration": bonus["duration"]
-                    }
-                    buffs.append(buff)
-                    print(f"🔁 Bonus Buff: +{buff['amount']} {buff['stat'].upper()} for {buff['duration']} turns.")
+        ctx["consec_defends"] = 0
 
-    else:
-        # Basic attack
-        atk_bonus = sum(b["amount"] for b in buffs if b["stat"].lower() == "atk")
-        base_atk = enemy["ATK"] + atk_bonus
-        dmg = calculate_damage({"ATK": base_atk}, player)
-        player["HP"] -= dmg
+    elif action == "defend":
+        def_buff = int(round(enemy["DEF"] * 0.5))
+        buffs.append({"stat": "def", "amount": def_buff, "duration": 1, "tag": "GUARD"})
+        echo_gauge = clamp(echo_gauge + 2)
+        print(f"🛡️ {enemy['name']} defends. +{def_buff} DEF for 1 turn. Echo Gauge: {echo_gauge}/{gauge_cap}")
+        ctx["consec_defends"] = 1  # prevent back-to-back defending
+
+    else:  # attack
+        dmg = calculate_damage({"ATK": final_atk}, player)
+        player["HP"] = max(0, player["HP"] - dmg)
         print(f"🗡️ {enemy['name']} attacks! Deals {dmg} damage.")
+        ctx["consec_defends"] = 0
 
-    return echo_gauge
+    return echo_gauge, buffs, ctx
+
 
 def start_solo_duel(p_house, p_name, p_bond,
                     e_house, e_name, e_bond,
@@ -469,6 +514,12 @@ def start_solo_duel(p_house, p_name, p_bond,
     enemy_duo     = get_duo_echoes(e_house, e_bond, EchoEffects)
     enemy_arts    = {**enemy_solo, **enemy_duo}
 
+    # New: lightweight context for the enemy AI
+    enemy_ctx = {
+        "last_damage_taken": 0,
+        "partner_fallen_recently": False,  # solo stays False
+        "consec_defends": 0
+    }
     turn = 1
     triggered_theme = None  # records the surge theme, not the curated duel theme
 
@@ -490,7 +541,6 @@ def start_solo_duel(p_house, p_name, p_bond,
             player["buffs"],
             p_action
         )
-
         # ✨ Trigger flavor after player turn
         trigger_flavor_effects(player, enemy)
 
@@ -499,12 +549,13 @@ def start_solo_duel(p_house, p_name, p_bond,
             break
 
         # 🔮 Enemy turn
-        enemy["echo_gauge"] = run_enemy_turn(
+        enemy["echo_gauge"], enemy["buffs"], enemy_ctx = run_enemy_turn(
             enemy,
             player,
             enemy_arts,
             enemy["echo_gauge"],
-            enemy["buffs"]
+            enemy["buffs"],
+            enemy_ctx
         )
 
         # ✨ Trigger flavor after enemy turn
@@ -635,6 +686,9 @@ def start_duo_battle(
         P_active["buffs"] = tick_buffs(P_active["buffs"])
         E_active["buffs"] = tick_buffs(E_active["buffs"])
 
+        # Store E_active HP before player turn for damage tracking
+        previous_hp = E_active["HP"]
+
         # === PLAYER TURN ===
         player_arts = merged_arts(P_active, player_duo_key, P_partner["HP"] > 0)
         p_action = get_player_action(P_active, P_active["echo_gauge"], player_arts)
@@ -654,11 +708,13 @@ def start_duo_battle(
             else:
                 print(f"\n🏆 {P_active['name']} & {P_partner['name']} win!")
                 break
+        enemy_ctx["last_damage_taken"] = max(0, previous_hp - E_active["HP"])
 
         # === ENEMY TURN ===
         enemy_arts = merged_arts(E_active, enemy_duo_key, E_partner["HP"] > 0)
-        E_active["echo_gauge"] = run_enemy_turn(
-            E_active, P_active, enemy_arts, E_active["echo_gauge"], E_active["buffs"]
+        # Add enemy_ctx argument to run_enemy_turn
+        E_active["echo_gauge"], E_active["buffs"], enemy_ctx = run_enemy_turn(
+            E_active, P_active, enemy_arts, E_active["echo_gauge"], E_active["buffs"], enemy_ctx
         )
         clamp_hp(E_active); clamp_hp(P_active); clamp_gauge(E_active)
 
