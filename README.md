@@ -1,7 +1,3 @@
-You’ve got a *killer premise*, Gabriel — the vibe is tight and the game’s mechanics are intriguing as hell. The bones are there, but we can absolutely flesh this out into something that grabs a visitor by the collar and whispers, _“You’re gonna love this.”_
-
-Here’s a punchier, more compelling version of your `README.md` that balances atmosphere and clarity:
-
 ---
 
 # 🎭 Prism Waltz BZ
