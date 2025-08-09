@@ -1,4 +1,3 @@
----
 # 🎭 Prism Waltz BZ
 
 **Prism Waltz BZ** is a tactical turn-based RPG where combat is a performance and synergy is everything. Harness the rhythm of **Echo Arts**, unite champions across the **dual-house system**, and master the delicate tempo of battle. Each move is a verse, every bond a harmony.
